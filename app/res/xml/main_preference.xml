@@ -9,32 +9,28 @@
             android:summary="@string/pref_fileKeyStorePath_summary"
             android:title="@string/pref_fileKeyStorePath_title"
             android:inputType="textNoSuggestions|textVisiblePassword"
-            android:defaultValue="wss://192.168.8.13:7120/"
+            android:defaultValue="/system/etc/security/cacerts.bks"
             />
-        <!-- ToDo: add more than one URL - we support redundant servers -->
         <EditTextPreference
-            android:key="remoteNotifyNetCameraURL1"
-            android:summary="@string/main_preference_remoteNotifyNetCameraURL1_summary"
-            android:title="@string/main_preference_remoteNotifyNetCameraURL1_title"
+            android:key="passwordKeyStore"
+            android:summary="@string/pref_passwordKeyStore_summary"
+            android:title="@string/pref_passwordKeyStore_title"
             android:inputType="textNoSuggestions|textVisiblePassword"
-            android:defaultValue="https://192.168.8.13:7117"
+            android:defaultValue="changeit"
+            />
+        <CheckBoxPreference
+            android:key="loadKeyStoreFile"
+            android:title="Load KeyStore file"
+            android:defaultValue="true"
+            android:summary="Load KeyStore File from file path"
+            />
+        <EditTextPreference
+            android:key="typeKeyStore"
+            android:summary="@string/pref_typeKeyStore_summary"
+            android:title="@string/pref_typeKeyStore_title"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:defaultValue="BKS"
             />
     </PreferenceCategory>
-
-    <PreferenceCategory
-        android:summary="@string/main_preference_category_loginpreferences"
-        android:title="@string/main_preference_category_superuser_preferences_title"
-        >
-
-        <ListPreference
-            android:key="superuserMultiFactorMethod"
-            android:entries="@array/listOptions"
-            android:entryValues="@array/listValues"
-            android:summary="@string/main_preference_summary_multiFactorAuth"
-            android:title="@string/main_preference_title_multiFactorAuth"
-            android:defaultValue="2"
-            />
-    </PreferenceCategory>
-
 
 </PreferenceScreen>

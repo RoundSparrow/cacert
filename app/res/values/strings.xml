@@ -44,5 +44,13 @@
     <string name="eula_title">You agree to:</string>
     <string name="eula_accept">Accept</string>
     <string name="eula_refuse">Refuse</string>
-    
+    <string name="main_preference_category_summary">KeyStore settings</string>
+    <string name="main_preferences_category_title">KeyStore</string>
+    <string name="pref_fileKeyStorePath_summary">KeyStore file path</string>
+    <string name="pref_fileKeyStorePath_title">KeyStore file path</string>
+    <string name="pref_passwordKeyStore_summary">KeyStore password</string>
+    <string name="pref_passwordKeyStore_title">KeyStore password</string>
+    <string name="pref_typeKeyStore_summary">KeyStore Type - Advanced, do not change unless you are certain of the proper value. Default is BKS - also try PKCS12 - likely case sensitive.</string>
+    <string name="pref_typeKeyStore_title">KeyStore Type</string>
+
 </resources>

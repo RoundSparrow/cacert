@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
  * Copyright (C) 2008 Esmertec AG.
  * Copyright (C) 2008 The Android Open Source Project
@@ -19,25 +18,33 @@
 -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <item
+        android:id="@+id/menu_search"
+        android:title="Search" />
 
-    <item android:id="@+id/menu_search"
-        android:title="Search"  />
+    <item
+        android:id="@+id/menu_save"
+        android:title="Save" />
 
-    <item android:id="@+id/menu_save"
-        android:title="Save"  />
-       
-          <item android:id="@+id/menu_help"
-        android:title="Help"  />
-         
-        <item android:id="@+id/menu_backup"
-        android:title="Backup"  />
-        
-         <item android:id="@+id/menu_restore"
-        android:title="Restore"  />
-       
-        
-          <item android:id="@+id/menu_about"
-        android:title="About"  />
-        
-        
+    <item
+        android:id="@+id/menu_help"
+        android:title="Help" />
+
+    <item
+        android:id="@+id/menu_backup"
+        android:title="Backup" />
+
+    <item
+        android:id="@+id/menu_restore"
+        android:title="Restore" />
+
+    <item
+        android:id="@+id/menu_preferences"
+        android:title="Preferences" />
+
+    <item
+        android:id="@+id/menu_about"
+        android:title="About" />
+
+
 </menu>
