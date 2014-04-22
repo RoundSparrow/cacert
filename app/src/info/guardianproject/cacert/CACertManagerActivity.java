@@ -495,7 +495,6 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
         about.append(getString(R.string.app_name));
 
-
         String version = "";
 
         try {
