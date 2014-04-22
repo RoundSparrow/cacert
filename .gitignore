@@ -11,3 +11,4 @@ app/.settings
 app/app.iml
 app/build/
 app/.gradle/
+CustomCACert.iml
