@@ -7,23 +7,17 @@ package info.guardianproject.cacert;
 import info.guardianproject.cacert.Eula.OnEulaAgreedTo;
 
 import java.io.File;
-import java.io.IOException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
-import javax.security.auth.x500.X500Principal;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,13 +29,11 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +51,8 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 	private CACertManager mCertMan;
 	
     private ListView mListCerts;
+    private TextView mTextOutputError0;
+    private static String mOutputErrorMostRecent = "no error";
 
     private String mKeyword = null;
     
@@ -67,7 +61,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
     
     private ProgressDialog pd;
     
-    /** Called when the activity is first created. */
+    /** Called when the activity is first created or on rotation. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,11 +69,14 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
         Eula.show(this);
         
         setContentView(R.layout.main);
-     
         
         this.setTitle(getString(R.string.app_name));
         
         mListCerts = (ListView)findViewById(R.id.listCerts);
+        mTextOutputError0 = (TextView)findViewById(R.id.outputError0);
+
+        // Restore if activity recreated
+        mTextOutputError0.setText(errorOutputIndex.get() + ": " + mOutputErrorMostRecent);
 
 	    mListCerts.setOnItemClickListener(this);
 	    mListCerts.setOnItemLongClickListener(this);
@@ -92,7 +89,8 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
         }
         catch (Exception e)
         {
-        	e.printStackTrace();
+        	Log.e(TAG, "Exception in onCreate CACertManager ", e);
+            showAlert("EOCA00 Exception in CACertManager");
         }
     }
     
@@ -239,7 +237,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
     	catch (Exception e)
     	{
     		showAlert(getString(R.string.failure_to_save) + ": " + e.getMessage());
-    		Log.e(TAG,"error saving",e);
+    		Log.e(TAG,"error saving", e);
     	}
     }
     
@@ -376,7 +374,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 		}
 		catch (Exception e)
 		{
-			showAlert(getString(R.string.error_loading_certs) + e.getMessage());
+			showAlert(getString(R.string.error_loading_certs) + " " + e.getMessage());
 			Log.e(TAG,"error loading",e);
 		}
 	}
@@ -394,7 +392,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
         	
         	 if (mKeyword != null)
         	 {
-        		   setTitle(getString(R.string.app_name) + ": " + mKeyword);
+        		 setTitle(getString(R.string.app_name) + ": " + mKeyword);
         	 }
         	 else
         	 {
@@ -408,12 +406,22 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
          }
      };
          
- 
+
+    private static AtomicInteger errorOutputIndex = new AtomicInteger();
+
 	private void showAlert (String msg)
 	{
+        int errorIndex = errorOutputIndex.incrementAndGet();
 		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
-		
+        if (mTextOutputError0 != null)
+        {
+            mTextOutputError0.setText(errorIndex + ": " + msg);
+        }
+
+        // Save for Activity onResume
+        mOutputErrorMostRecent = msg;
 	}
+
 	 @Override
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	    	MenuInflater inflater = getMenuInflater();
