@@ -96,5 +96,6 @@ public class CACertManager {
 
         OutputStream trustStoreStream = new FileOutputStream(new File(targetPath));
         ksCACert.store(trustStoreStream, password.toCharArray());
+        trustStoreStream.close();
     }
 }

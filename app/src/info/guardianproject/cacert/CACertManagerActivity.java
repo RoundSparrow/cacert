@@ -46,6 +46,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
     private final static String CACERT_BACKUP_PATH = "mycacerts.bks";
     private final static String CACERT_TMP_PATH = "tmpcacerts.bks";
 
+    // ToDo: implement settings preferences user can revise
     private final static String DEFAULT_PASS = "changeit";
 
     private CACertManager mCertMan;
