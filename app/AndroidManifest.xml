@@ -1,16 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="info.guardianproject.cacert"
-    android:versionCode="6"
-    android:versionName="0.1.6" >
-
-    <uses-sdk
-        android:maxSdkVersion="13"
-        android:minSdkVersion="4"
-        android:targetSdkVersion="19"
-        />
+    >
 
     <uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_ALL_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="false"
@@ -25,6 +21,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".PrefsActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar" >
+        </activity>1
     </application>
 
 </manifest>
