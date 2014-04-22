@@ -230,14 +230,16 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
     private void backupKeystore() {
 
+        File fileBak = new File("notSet");
         try {
-            File fileBak = new File(getFilesDir(), CACERT_BACKUP_PATH);
+            fileBak = new File(getFilesDir(), CACERT_BACKUP_PATH);
 
             mCertMan.save(fileBak.getAbsolutePath(), DEFAULT_PASS);
 
             showAlert(getString(R.string.success_system_cacert_keystore_backed_up_to) + fileBak.getAbsolutePath());
         } catch (Exception e) {
-            showAlert(getString(R.string.failure_to_save) + e.getMessage());
+            showAlert(getString(R.string.failure_to_save) + ": " + e.getMessage());
+            Log.e(TAG, "error saving file: " + fileBak, e);
         }
     }
 

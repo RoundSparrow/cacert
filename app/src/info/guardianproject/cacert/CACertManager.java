@@ -32,16 +32,18 @@ public class CACertManager {
 	
     KeyStore ksCACert;
     private final static String KEYSTORE_TYPE = "BKS";
+    Process superUserTestProcess = null;
     
     public CACertManager ()
     {
     	try {
-			Process p = Runtime.getRuntime().exec("su");
+			superUserTestProcess = Runtime.getRuntime().exec("su");
+            // ToDo: caller should check that this worked - SU is available on this system
 		} catch (IOException e) {
-			
-			e.printStackTrace();
+            Log.e(TAG, "Exception in CACertManager ", e);
 		}
     }
+    
     public void load (String path, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException
     {
     	ksCACert = KeyStore.getInstance(KEYSTORE_TYPE);
