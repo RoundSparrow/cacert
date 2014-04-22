@@ -5,3 +5,9 @@ app/gen/
 app/build.xml
 app/local.properties
 app/proguard-project.txt
+# Android Studio / gradle
+app/.idea
+app/.settings
+app/app.iml
+app/build/
+app/.gradle/
