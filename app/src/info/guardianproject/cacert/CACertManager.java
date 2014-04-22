@@ -28,92 +28,73 @@ import android.util.Log;
 
 public class CACertManager {
 
-	private final static String TAG = "CACert";
-	
+    private final static String TAG = "CACert";
+
     KeyStore ksCACert;
     private final static String KEYSTORE_TYPE = "BKS";
     Process superUserTestProcess = null;
-    
-    public CACertManager ()
-    {
-    	try {
-			superUserTestProcess = Runtime.getRuntime().exec("su");
+
+    public CACertManager() {
+        try {
+            superUserTestProcess = Runtime.getRuntime().exec("su");
             // ToDo: caller should check that this worked - SU is available on this system
-		} catch (IOException e) {
+        } catch (IOException e) {
             Log.e(TAG, "Exception in CACertManager ", e);
-		}
-    }
-    
-    public void load (String path, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException
-    {
-    	ksCACert = KeyStore.getInstance(KEYSTORE_TYPE);
-    	
-	    // code taken from GPL library AndroidPinning 
-		if ( Build.VERSION.SDK_INT >= 14 ) {
-			ksCACert = KeyStore.getInstance("AndroidCAStore");
-			ksCACert.load(null,null);
-		} 
-		else {
-		    
-	    	InputStream trustStoreStream = new FileInputStream(new File(path));
-	    	ksCACert.load(trustStoreStream, password.toCharArray());
-	    }
-
-    }
-    
-    public Enumeration<String> getCertificateAliases () throws KeyStoreException
-    {
-    	return ksCACert.aliases();
-    	
-    	
-    }
-    
-    public int size ()  throws KeyStoreException
-    {
-    	return ksCACert.size();
-    }
-  
-    public Certificate getCertificate (String alias) throws KeyStoreException
-    {
-    	return ksCACert.getCertificate(alias);
-    	
-    }
-    
-    public Certificate[] getCertificateChain (String alias) throws KeyStoreException
-    {
-    	return ksCACert.getCertificateChain(alias);
+        }
     }
 
-    public void addCertificate (String alias, Certificate cert) throws KeyStoreException
-    {
-    	ksCACert.setCertificateEntry(alias, cert);
+    public void load(String path, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+        ksCACert = KeyStore.getInstance(KEYSTORE_TYPE);
+
+        // code taken from GPL library AndroidPinning
+        if (Build.VERSION.SDK_INT >= 14) {
+            ksCACert = KeyStore.getInstance("AndroidCAStore");
+            ksCACert.load(null, null);
+        } else {
+
+            InputStream trustStoreStream = new FileInputStream(new File(path));
+            ksCACert.load(trustStoreStream, password.toCharArray());
+        }
     }
-    
-    public void delete(String alias)  throws KeyStoreException
-    {
-    	ksCACert.deleteEntry(alias);
-    	
+
+    public Enumeration<String> getCertificateAliases() throws KeyStoreException {
+        return ksCACert.aliases();
     }
-    
-    public void delete(Certificate cert)  throws KeyStoreException
-    {
-    	ksCACert.deleteEntry(ksCACert.getCertificateAlias(cert));
-    	
+
+    public int size() throws KeyStoreException {
+        return ksCACert.size();
     }
-    
-    public void save (String targetPath, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException
-    {
-    	File fileNew = new File(targetPath);
-    	
-    	if (fileNew.exists() && (!fileNew.canWrite()))
-    		throw new FileNotFoundException("Cannot write to: " + targetPath);
-    	else if (fileNew.getParentFile().exists() && (!fileNew.getParentFile().canWrite()))
-    		throw new FileNotFoundException("Cannot write to: " + targetPath);
-    	
-    	OutputStream trustStoreStream = new FileOutputStream(new File(targetPath));
-    	ksCACert.store(trustStoreStream, password.toCharArray());
+
+    public Certificate getCertificate(String alias) throws KeyStoreException {
+        return ksCACert.getCertificate(alias);
     }
-    
-    
-    
+
+    public Certificate[] getCertificateChain(String alias) throws KeyStoreException {
+        return ksCACert.getCertificateChain(alias);
+    }
+
+    public void addCertificate(String alias, Certificate cert) throws KeyStoreException {
+        ksCACert.setCertificateEntry(alias, cert);
+    }
+
+    public void delete(String alias) throws KeyStoreException {
+        ksCACert.deleteEntry(alias);
+    }
+
+    public void delete(Certificate cert) throws KeyStoreException {
+        ksCACert.deleteEntry(ksCACert.getCertificateAlias(cert));
+
+    }
+
+    public void save(String targetPath, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+        File fileNew = new File(targetPath);
+
+        if (fileNew.exists() && (!fileNew.canWrite()))
+            throw new FileNotFoundException("Cannot write to: " + targetPath);
+        else if (fileNew.getParentFile().exists() && (!fileNew.getParentFile().canWrite()))
+            throw new FileNotFoundException("Cannot write to: " + targetPath);
+
+        OutputStream trustStoreStream = new FileOutputStream(new File(targetPath));
+        ksCACert.store(trustStoreStream, password.toCharArray());
+    }
 }
