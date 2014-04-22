@@ -23,6 +23,7 @@ import java.util.Enumeration;
 
 import java.security.cert.Certificate;
 
+import android.os.Build;
 import android.util.Log;
 
 public class CACertManager {
@@ -44,9 +45,18 @@ public class CACertManager {
     public void load (String path, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException
     {
     	ksCACert = KeyStore.getInstance(KEYSTORE_TYPE);
-    
-    	InputStream trustStoreStream = new FileInputStream(new File(path));
-    	ksCACert.load(trustStoreStream, password.toCharArray());
+    	
+	    // code taken from GPL library AndroidPinning 
+		if ( Build.VERSION.SDK_INT >= 14 ) {
+			ksCACert = KeyStore.getInstance("AndroidCAStore");
+			ksCACert.load(null,null);
+		} 
+		else {
+		    
+	    	InputStream trustStoreStream = new FileInputStream(new File(path));
+	    	ksCACert.load(trustStoreStream, password.toCharArray());
+	    }
+
     }
     
     public Enumeration<String> getCertificateAliases () throws KeyStoreException

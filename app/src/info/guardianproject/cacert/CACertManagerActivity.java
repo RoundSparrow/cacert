@@ -356,7 +356,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 	          
 	          if (alCerts.size() == 0)
 	          {
-	        	  Toast.makeText(this, getString(R.string.no_certificates_matched_the_search), Toast.LENGTH_SHORT).show();
+	        	  Toast.makeText(this, getString(R.string.no_certificates_matched_the_search), Toast.LENGTH_LONG).show();
 	          }
 	         
 	          String[] names = new String[alCerts.size()];
@@ -411,7 +411,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
  
 	private void showAlert (String msg)
 	{
-		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+		Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 		
 	}
 	 @Override
