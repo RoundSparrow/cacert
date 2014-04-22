@@ -23,6 +23,7 @@ import java.util.Enumeration;
 
 import java.security.cert.Certificate;
 
+import android.content.Context;
 import android.os.Build;
 import android.util.Log;
 
@@ -31,11 +32,13 @@ public class CACertManager {
     private final static String TAG = "CACert";
 
     KeyStore ksCACert;
-    private final static String KEYSTORE_TYPE = "BKS";
+    //private final static String KEYSTORE_TYPE = "BKS";
     Process superUserTestProcess = null;
+    Context androidContext;
 
-    public CACertManager() {
+    public CACertManager(Context inContext) {
         try {
+            androidContext = inContext;
             superUserTestProcess = Runtime.getRuntime().exec("su");
             // ToDo: caller should check that this worked - SU is available on this system
         } catch (IOException e) {
@@ -43,15 +46,29 @@ public class CACertManager {
         }
     }
 
-    public void load(String path, String password) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
-        ksCACert = KeyStore.getInstance(KEYSTORE_TYPE);
+    public void load(String path, String password, String keystoreType) throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+        ksCACert = KeyStore.getInstance(keystoreType);
 
         // code taken from GPL library AndroidPinning
         if (Build.VERSION.SDK_INT >= 14) {
-            ksCACert = KeyStore.getInstance("AndroidCAStore");
-            ksCACert.load(null, null);
+            if (PreferencesHelper.getLoadKeyStoreFile(androidContext)) {
+                File fileKeyStore = new File(path);
+                if (fileKeyStore.exists()) {
+                    Log.i(TAG, "file exists in CACertManager " + path);
+                    InputStream trustStoreStream = new FileInputStream(fileKeyStore);
+                    ksCACert.load(trustStoreStream, password.toCharArray());
+                }
+                else
+                {
+                    Log.e(TAG, "Can't read file in CACertManager " + path);
+                }
+            }
+            else
+            {
+                ksCACert = KeyStore.getInstance("AndroidCAStore");
+                ksCACert.load(null, null);
+            }
         } else {
-
             InputStream trustStoreStream = new FileInputStream(new File(path));
             ksCACert.load(trustStoreStream, password.toCharArray());
         }

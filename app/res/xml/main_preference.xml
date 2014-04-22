@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory
+        android:summary="@string/main_preference_category_summary"
+        android:title="@string/main_preferences_category_title"
+        >
+        <EditTextPreference
+            android:key="fileKeyStorePath"
+            android:summary="@string/pref_fileKeyStorePath_summary"
+            android:title="@string/pref_fileKeyStorePath_title"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:defaultValue="wss://192.168.8.13:7120/"
+            />
+        <!-- ToDo: add more than one URL - we support redundant servers -->
+        <EditTextPreference
+            android:key="remoteNotifyNetCameraURL1"
+            android:summary="@string/main_preference_remoteNotifyNetCameraURL1_summary"
+            android:title="@string/main_preference_remoteNotifyNetCameraURL1_title"
+            android:inputType="textNoSuggestions|textVisiblePassword"
+            android:defaultValue="https://192.168.8.13:7117"
+            />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:summary="@string/main_preference_category_loginpreferences"
+        android:title="@string/main_preference_category_superuser_preferences_title"
+        >
+
+        <ListPreference
+            android:key="superuserMultiFactorMethod"
+            android:entries="@array/listOptions"
+            android:entryValues="@array/listValues"
+            android:summary="@string/main_preference_summary_multiFactorAuth"
+            android:title="@string/main_preference_title_multiFactorAuth"
+            android:defaultValue="2"
+            />
+    </PreferenceCategory>
+
+
+</PreferenceScreen>

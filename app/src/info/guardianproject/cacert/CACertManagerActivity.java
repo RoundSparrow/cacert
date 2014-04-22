@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,12 +43,13 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
     public static final String TAG = "CACert";
 
-    private final static String CACERT_SYSTEM_PATH = "/system/etc/security/cacerts.bks";
+    private static String CACERT_SYSTEM_PATH = "/system/etc/security/cacerts.bks";
     private final static String CACERT_BACKUP_PATH = "mycacerts.bks";
     private final static String CACERT_TMP_PATH = "tmpcacerts.bks";
+    private static String keyStoreType = "BKS";
 
     // ToDo: implement settings preferences user can revise
-    private final static String DEFAULT_PASS = "changeit";
+    private static String DEFAULT_PASS = "changeit";
 
     private CACertManager mCertMan;
 
@@ -84,10 +86,12 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
         mListCerts.setOnItemClickListener(this);
         mListCerts.setOnItemLongClickListener(this);
 
+        CACERT_SYSTEM_PATH = PreferencesHelper.getFileKeyStorePath(this);
+        DEFAULT_PASS = PreferencesHelper.getPasswordKeyStore(this);
+        keyStoreType = PreferencesHelper.getTypeKeyStore(this);
+
         try {
-            mCertMan = new CACertManager();
-
-
+            mCertMan = new CACertManager(this);
         } catch (Exception e) {
             Log.e(TAG, "Exception in onCreate CACertManager ", e);
             showAlert("EOCA00 Exception in CACertManager");
@@ -215,7 +219,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
             Thread.sleep(1000);//wait one second
 
-            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS);
+            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS, keyStoreType);
 
             if (success)
                 showAlert(getString(R.string.success_cacert_keystore_saved_to_system) + ' ' + CACERT_SYSTEM_PATH);
@@ -254,7 +258,7 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
             Thread.sleep(1000);//wait one second
 
-            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS);
+            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS, keyStoreType);
 
             if (success)
                 showAlert(getString(R.string.success_system_cacert_restored_from) + bakPath);
@@ -277,24 +281,27 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
         if (preferences.getBoolean(Eula.PREFERENCE_EULA_ACCEPTED, false)) {
 
-            loadKeystore();
-            doLoadList();
+            boolean goodLoad = loadKeystore();
+            if (goodLoad) {
+                doLoadList();
+            }
         }
     }
 
-    private void loadKeystore() {
+    private boolean loadKeystore() {
         try {
-            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS);
+            mCertMan.load(CACERT_SYSTEM_PATH, DEFAULT_PASS, keyStoreType);
+            return true;
         } catch (Exception e) {
-            showAlert(getString(R.string.error_loading_certs) + e.getMessage());
+            showAlert(getString(R.string.error_loading_certs) + " " + e.getMessage() + " " + CACERT_SYSTEM_PATH);
             Log.e(TAG, "error loading", e);
         }
+        return false;
     }
 
     private void doLoadList() {
         pd = ProgressDialog.show(this, "Working..", getString(R.string.loading_cacert_keystore_from_system), true,
                 false);
-
 
         Thread thread = new Thread(this);
         thread.start();
@@ -303,7 +310,6 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
     public void run() {
         try {
             Looper.prepare();
-
 
             Enumeration<String> aliases = mCertMan.getCertificateAliases();
 
@@ -335,17 +341,17 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
             for (X509Certificate cert : alCerts) {
                 names[i++] = processCert(cert);
-
             }
 
             Message msg = new Message();
             msg.getData().putStringArray("names", names);
             pdLoadList.sendMessage(msg);
-
-            pdDialogDismiss.sendEmptyMessage(0);
         } catch (Exception e) {
-            showAlert(getString(R.string.error_loading_certs) + " " + e.getMessage());
+            showAlert(getString(R.string.error_loading_certs) + " " + e.getMessage() + " " + CACERT_SYSTEM_PATH);
             Log.e(TAG, "error loading", e);
+        } finally
+        {
+            pdDialogDismiss.sendEmptyMessage(0);
         }
     }
 
@@ -392,7 +398,6 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
 
-
         return true;
     }
 
@@ -419,6 +424,11 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
 
             case R.id.menu_about:
                 showAbout();
+                return true;
+
+            case R.id.menu_preferences:
+                Intent intent = new Intent(CACertManagerActivity.this, PrefsActivity.class);
+                startActivityForResult(intent, 10);
                 return true;
 
             case R.id.menu_help:
@@ -549,10 +559,9 @@ public class CACertManagerActivity extends Activity implements OnEulaAgreedTo, R
     @Override
     public void onEulaAgreedTo() {
 
-        loadKeystore();
-        doLoadList();
-
+        boolean goodLoad = loadKeystore();
+        if (goodLoad) {
+            doLoadList();
+        }
     }
-
-
 }
